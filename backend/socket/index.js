@@ -31,7 +31,7 @@ export const socketHandler = (io) => {
         callback?.({ success: true });
 
         if (!socket.hasLoggedIn) {
-          socket.hasLoggedIn = true; 
+          socket.hasLoggedIn = true;
           io.emit("message", {
             sender: "BOT FURIA",
             message: `${username} entrou no chat`,

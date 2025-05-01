@@ -1,29 +1,61 @@
-export default function Message({ msg, own }) {
-  const isBot = msg.type === "bot";
+import { User } from "lucide-react";
+import furiaLogo from "@/assets/furia-logo.png";
 
-  const textColor = isBot
-    ? "text-purple-400"
-    : own
-    ? "text-green-400"
-    : "text-white";
+export default function Message({ msg, own }) {
+  let textColor = "";
+  let bgColor = "";
+
+  switch (msg.type) {
+    case "bot":
+      textColor = "text-purple-400";
+      bgColor = "bg-purple-900/40";
+      break;
+    case "event":
+      textColor = "text-orange-400";
+      bgColor = "bg-orange-900/40";
+      break;
+    case "score":
+      textColor = "text-blue-400";
+      bgColor = "bg-blue-900/30";
+      break;
+    case "end":
+      textColor = "text-red-400";
+      bgColor = "bg-red-900/40";
+      break;
+    default:
+      textColor = own ? "text-green-400" : "text-white";
+      bgColor = own ? "bg-green-900/30" : "bg-zinc-700";
+  }
 
   return (
     <div
-      className={`flex items-start gap-3 mb-3 ${
-        own ? "justify-end" : "justify-start"
-      }`}
+      className={`flex items-start gap-3 mb-3 ${own ? "justify-end" : "justify-start"}`}
     >
       {!own && (
-        <div className="w-8 h-8 rounded-full bg-zinc-500 flex-shrink-0" />
+        msg.type === "bot" ? (
+          <img
+            src={furiaLogo}
+            alt="Logo FURIA"
+            className="w-10 h-10 flex-shrink-0"
+          />
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-zinc-500 flex-shrink-0 flex items-center justify-center">
+            <User />
+          </div>
+        )
       )}
+
       <div
-        className={`flex flex-col ${textColor} max-w-[80%] break-words bg-zinc-700 p-2 rounded-lg`}
+        className={`flex flex-col ${textColor} ${bgColor} max-w-[80%] break-words p-2 rounded-lg`}
       >
         <span className="font-semibold">{msg.sender}</span>
         <span className="text-sm">{msg.message}</span>
       </div>
+
       {own && (
-        <div className="w-8 h-8 rounded-full bg-zinc-500 flex-shrink-0" />
+        <div className="w-8 h-8 rounded-full bg-zinc-500 flex-shrink-0 flex items-center justify-center">
+          <User />
+        </div>
       )}
     </div>
   );

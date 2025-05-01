@@ -4,6 +4,9 @@ import { socket } from "@/socket.js";
 import ChatBox from "@/components/ChatBox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import ConfirmarDialog from "@/components/ConfirmarDialog";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Chat() {
   const [messages, setMessages] = useState([]);
@@ -13,6 +16,7 @@ export default function Chat() {
   const headerRef = useRef(null);
   const inputRef = useRef(null);
   const [chatBoxHeight, setChatBoxHeight] = useState("auto");
+  const [erroSimulacao, setErroSimulacao] = useState(null);
 
   const storedUsername = sessionStorage.getItem("username");
   const storedPassword = sessionStorage.getItem("password");
@@ -71,7 +75,8 @@ export default function Chat() {
       requestAnimationFrame(() => {
         const headerHeight = headerRef.current?.offsetHeight || 0;
         const inputHeight = inputRef.current?.offsetHeight || 0;
-        const availableHeight = window.innerHeight - headerHeight - inputHeight - 32; // 32 = padding/margin do container interno
+        const availableHeight =
+          window.innerHeight - headerHeight - inputHeight - 32;
         setChatBoxHeight(availableHeight);
       });
     };
@@ -86,10 +91,30 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    if (erroSimulacao) {
+      const timeout = setTimeout(() => {
+        setErroSimulacao(null);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [erroSimulacao]);
+
   const sendMessage = () => {
     if (!input.trim()) return;
     socket.emit("chatMessage", input);
     setInput("");
+  };
+
+  const iniciarSimulacao = async () => {
+    try {
+      await axios.post("http://localhost:3000/iniciar-simulacao");
+      setErroSimulacao(null);
+    } catch (error) {
+      console.error("Erro ao iniciar simulação:", error);
+      const msg = error.response?.data?.error || "Erro ao iniciar simulação.";
+      setErroSimulacao(msg);
+    }
   };
 
   return (
@@ -106,10 +131,29 @@ export default function Chat() {
           className="overflow-y-auto"
           style={{ height: `${chatBoxHeight}px` }}
         >
-          <ChatBox messages={messages} endRef={messagesEndRef} username={storedUsername}/>
+          <ChatBox
+            messages={messages}
+            endRef={messagesEndRef}
+            username={storedUsername}
+          />
         </div>
 
         <div className="flex gap-2 mt-4 pb-3" ref={inputRef}>
+          <AnimatePresence>
+            {erroSimulacao && (
+              <motion.p
+                key="erro"
+                className="text-red-500 text-sm mt-1"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {erroSimulacao}
+              </motion.p>
+            )}
+          </AnimatePresence>
+          <ConfirmarDialog onConfirm={iniciarSimulacao} />
           <Input
             className="bg-zinc-800 text-white flex-1"
             placeholder="Digite uma mensagem ou comando"
@@ -117,7 +161,9 @@ export default function Chat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
-          <Button onClick={sendMessage}>Enviar</Button>
+          <Button className="bg-emerald-800" onClick={sendMessage}>
+            Enviar
+          </Button>
         </div>
       </div>
     </div>

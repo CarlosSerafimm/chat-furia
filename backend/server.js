@@ -4,7 +4,8 @@ import { Server } from "socket.io";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
 import { socketHandler } from "./socket/index.js";
-import userRoutes from "./routes/UserRoutes.js";
+import routes from "./routes/Routes.js";
+import { initSocket } from "./socket/socketInstance.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -14,9 +15,10 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
-app.use("/", userRoutes);
+app.use("/", routes);
 
 connectDB();
+initSocket(io)
 socketHandler(io);
 
 server.listen(3000, () => {
