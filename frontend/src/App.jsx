@@ -1,20 +1,22 @@
-import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
-import Chat from "./pages/chat/Chat";
-import Auth from "./pages/login/Auth";
-
-function AppRoutes() {
-  return (
-    <Routes>
-      <Route path="/" element={<Auth />} />
-      <Route path="/chat" element={<Chat />} />
-    </Routes>
-  );
-}
+import { Outlet, useLocation } from "react-router-dom";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
 export default function App() {
+  const location = useLocation();
+  const isAuthPage = location.pathname === "/";
+
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <SidebarProvider>
+      <div className="flex h-screen w-screen">
+        {!isAuthPage && <AppSidebar  />}
+        <main className={`flex-1 relative`}>
+          {!isAuthPage && (
+            <SidebarTrigger className="absolute top-4 left-4 z-10 bg-slate-400" />
+          )}
+          <Outlet />
+        </main>
+      </div>
+    </SidebarProvider>
   );
 }

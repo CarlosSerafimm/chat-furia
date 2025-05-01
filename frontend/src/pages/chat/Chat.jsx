@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { socket } from "@/socket.js";
 import ChatBox from "@/components/ChatBox";
 import { Input } from "@/components/ui/input";
@@ -10,10 +10,12 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
+  const headerRef = useRef(null);
+  const inputRef = useRef(null);
+  const [chatBoxHeight, setChatBoxHeight] = useState("auto");
 
   const storedUsername = sessionStorage.getItem("username");
   const storedPassword = sessionStorage.getItem("password");
-  const alreadyLoggedInRef = useRef(false);
 
   useEffect(() => {
     if (!storedUsername || !storedPassword) {
@@ -33,7 +35,7 @@ export default function Chat() {
           username: storedUsername,
           password: storedPassword,
         });
-        socket.hasLoggedIn = true; // Marcar como logado
+        socket.hasLoggedIn = true;
       }
     };
 
@@ -65,6 +67,22 @@ export default function Chat() {
   }, [navigate, storedUsername, storedPassword]);
 
   useEffect(() => {
+    const calculateChatBoxHeight = () => {
+      requestAnimationFrame(() => {
+        const headerHeight = headerRef.current?.offsetHeight || 0;
+        const inputHeight = inputRef.current?.offsetHeight || 0;
+        const availableHeight = window.innerHeight - headerHeight - inputHeight - 32; // 32 = padding/margin do container interno
+        setChatBoxHeight(availableHeight);
+      });
+    };
+
+    window.addEventListener("resize", calculateChatBoxHeight);
+    calculateChatBoxHeight();
+
+    return () => window.removeEventListener("resize", calculateChatBoxHeight);
+  }, []);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -76,13 +94,22 @@ export default function Chat() {
 
   return (
     <div className="min-h-screen w-full bg-zinc-900 text-white flex flex-col">
-      <header className="text-center py-4 text-2xl font-bold border-b border-zinc-800">
+      <header
+        ref={headerRef}
+        className="text-center py-4 text-2xl font-bold border-b border-zinc-800"
+      >
         Chat da FURIA
       </header>
 
-      <div className="flex-1 overflow-hidden flex flex-col px-4 pt-4">
-        <ChatBox messages={messages} endRef={messagesEndRef} />
-        <div className="flex gap-2 mt-4 mb-6">
+      <div className="overflow-hidden flex flex-col px-4 pt-4">
+        <div
+          className="overflow-y-auto"
+          style={{ height: `${chatBoxHeight}px` }}
+        >
+          <ChatBox messages={messages} endRef={messagesEndRef} username={storedUsername}/>
+        </div>
+
+        <div className="flex gap-2 mt-4 pb-3" ref={inputRef}>
           <Input
             className="bg-zinc-800 text-white flex-1"
             placeholder="Digite uma mensagem ou comando"
