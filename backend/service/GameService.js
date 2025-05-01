@@ -13,14 +13,16 @@ function getRandomOpponent() {
 
 function getRandomEvent(killer, victim) {
   const actions = [
-    "eliminou",
-    "headshotou",
-    "aniquilou",
-    "explodiu com HE",
-    "deu um no-scope em",
+    { action: "eliminou", emoji: "💥" },
+    { action: "headshotou", emoji: "🎯" },
+    { action: "aniquilou", emoji: "🔥" },
+    { action: "explodiu com HE", emoji: "💣" },
+    { action: "deu um no-scope em", emoji: "👀" },
   ];
-  const action = actions[Math.floor(Math.random() * actions.length)];
-  return `${killer} ${action} ${victim}`;
+  const randomAction = actions[Math.floor(Math.random() * actions.length)];
+  const action = randomAction.action;
+  const emoji = randomAction.emoji;
+  return `${killer} ${action} ${victim} ${emoji}`;
 }
 
 export async function startGameSimulation() {
@@ -37,6 +39,11 @@ export async function startGameSimulation() {
     sender: "BOT FURIA",
     message: `Iniciando partida: FURIA vs ${opponent}`,
     type: "bot",
+  });
+  io.emit("game-update", {
+    teams,
+    score,
+    status: "in_progress",
   });
 
   const interval = setInterval(async () => {
@@ -73,6 +80,13 @@ export async function startGameSimulation() {
 
     io.emit("score-update", score);
 
+    io.emit("game-update", {
+      teams,
+      score,
+      status: game.status,
+      events: game.events,
+    });
+
     if (score.FURIA >= 16 || score[opponent] >= 16) {
       clearInterval(interval);
       game.status = "ended";
@@ -83,6 +97,12 @@ export async function startGameSimulation() {
         sender: "BOT FURIA",
         message: `Fim de jogo! FURIA ${score.FURIA} x ${score[opponent]} ${opponent}`,
         type: "end",
+      });
+      io.emit("game-update", {
+        teams,
+        score,
+        status: "ended",
+        events: game.events,
       });
     } else {
       await game.save();

@@ -3,6 +3,7 @@ import {
   DialogTrigger,
   DialogContent,
   DialogFooter,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -23,6 +24,7 @@ export default function ConfirmarDialog({ onConfirm }) {
       </DialogTrigger>
 
       <DialogContent className="bg-zinc-900 text-white border-zinc-700">
+        <DialogTitle className="sr-only">Confirmar simulação</DialogTitle>
         <h2 className="text-lg font-semibold mb-2">Confirmar simulação</h2>
         <p className="text-sm mb-4 text-zinc-300">
           Deseja realmente iniciar a simulação da partida?

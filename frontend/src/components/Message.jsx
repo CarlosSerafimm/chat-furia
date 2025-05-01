@@ -29,10 +29,12 @@ export default function Message({ msg, own }) {
 
   return (
     <div
-      className={`flex items-start gap-3 mb-3 ${own ? "justify-end" : "justify-start"}`}
+      className={`flex items-start gap-3 mb-3 ${
+        own ? "justify-end" : "justify-start"
+      }`}
     >
-      {!own && (
-        msg.type === "bot" ? (
+      {!own &&
+        (["bot", "event", "score", "end"].includes(msg.type) ? (
           <img
             src={furiaLogo}
             alt="Logo FURIA"
@@ -42,8 +44,7 @@ export default function Message({ msg, own }) {
           <div className="w-8 h-8 rounded-full bg-zinc-500 flex-shrink-0 flex items-center justify-center">
             <User />
           </div>
-        )
-      )}
+        ))}
 
       <div
         className={`flex flex-col ${textColor} ${bgColor} max-w-[80%] break-words p-2 rounded-lg`}
