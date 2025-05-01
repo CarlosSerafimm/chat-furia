@@ -8,31 +8,61 @@ import { Button } from "@/components/ui/button";
 export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
-  const [username, setUsername] = useState("");
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
-  const { state } = useLocation();
+
+  const storedUsername = sessionStorage.getItem("username");
+  const storedPassword = sessionStorage.getItem("password");
+  const alreadyLoggedInRef = useRef(false);
 
   useEffect(() => {
-    if (!state?.username) {
-      navigate("/", { replace: true }); // 👈 sem username, volta para login
+    if (!storedUsername || !storedPassword) {
+      navigate("/", { replace: true });
       return;
     }
 
-    setUsername(state.username);
-    socket.emit("register", state.username);
+    const manualLogin = sessionStorage.getItem("loggedInManually") === "true";
+
+    if (manualLogin && !socket.connected) {
+      sessionStorage.removeItem("loggedInManually");
+    }
+
+    const handleConnect = () => {
+      if (!socket.hasLoggedIn) {
+        socket.emit("login", {
+          username: storedUsername,
+          password: storedPassword,
+        });
+        socket.hasLoggedIn = true; // Marcar como logado
+      }
+    };
 
     const handleMessage = (msg) => {
       setMessages((prev) => [...prev, msg]);
     };
 
+    const handleDisconnect = () => {
+      socket.hasLoggedIn = false;
+      sessionStorage.removeItem("loggedInManually");
+      navigate("/", { replace: true });
+    };
+
+    socket.on("connect", handleConnect);
     socket.on("message", handleMessage);
+    socket.on("disconnect", handleDisconnect);
+
+    if (socket.connected) {
+      handleConnect();
+    } else {
+      socket.connect();
+    }
 
     return () => {
+      socket.off("connect", handleConnect);
       socket.off("message", handleMessage);
+      socket.off("disconnect", handleDisconnect);
     };
-  }, [state, navigate]);
-
+  }, [navigate, storedUsername, storedPassword]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

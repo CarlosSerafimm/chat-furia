@@ -1,4 +1,6 @@
 import Message from "../models/Message.js";
+import User from "../models/User.js";
+import bcrypt from "bcrypt";
 
 const usuarios = new Map();
 const activeUsers = new Set();
@@ -7,23 +9,40 @@ export const socketHandler = (io) => {
   io.on("connection", (socket) => {
     console.log("Novo usuário conectado");
 
-    socket.on("register", (username, callback) => {
-      if (usuarios.has(username)) {
-        return callback?.({ success: false, message: "Nome já em uso" });
+    socket.on("login", async ({ username, password }, callback) => {
+      console.log("Username recebido:", username);
+      console.log("Password recebido:", password);
+
+      try {
+        const user = await User.findOne({ username });
+        if (!user)
+          return callback?.({
+            success: false,
+            message: "Usuário não encontrado",
+          });
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch)
+          return callback?.({ success: false, message: "Senha incorreta" });
+
+        usuarios.set(username, socket.id);
+        socket.username = username;
+
+        callback?.({ success: true });
+
+        if (!socket.hasLoggedIn) {
+          socket.hasLoggedIn = true; 
+          io.emit("message", {
+            sender: "BOT FURIA",
+            message: `${username} entrou no chat`,
+            type: "bot",
+            timestamp: new Date(),
+          });
+        }
+      } catch (err) {
+        console.error("Erro no login:", err);
+        callback?.({ success: false, message: "Erro ao fazer login" });
       }
-
-      usuarios.set(username, socket.id);
-      socket.username = username;
-      console.log(`Usuário registrado: ${username}`);
-
-      callback?.({ success: true });
-
-      io.emit("message", {
-        sender: "BOT",
-        message: `${username} entrou no chat`,
-        type: "bot",
-        timestamp: new Date(),
-      });
     });
 
     socket.on("chatMessage", async (msg) => {
@@ -41,10 +60,12 @@ export const socketHandler = (io) => {
     });
 
     socket.on("disconnect", () => {
+      console.log("Algum usuário desconectou");
       if (socket.username) {
+        console.log("Usuário " + socket.username + " desconectado");
         activeUsers.delete(socket.username);
         io.emit("message", {
-          sender: "BOT",
+          sender: "BOT FURIA",
           message: `${socket.username} saiu do chat`,
           type: "bot",
           timestamp: new Date(),
