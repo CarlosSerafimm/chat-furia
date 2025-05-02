@@ -8,6 +8,9 @@ import {
 import { io } from "../socket/socketInstance.js";
 import Message from "../models/Message.js";
 
+let currentInterval = null;
+let currentGameId = null;
+
 async function emitAndSaveMessage(data) {
   io.emit("message", data);
   await Message.create(data);
@@ -40,6 +43,7 @@ export async function startGameSimulation() {
   const score = { FURIA: 0, [opponent]: 0 };
 
   const game = new Game({ teams, score, status: "em_andamento" });
+  currentGameId = game._id;
   await game.save();
 
   await emitAndSaveMessage({
@@ -55,7 +59,7 @@ export async function startGameSimulation() {
     status: "em_andamento",
   });
 
-  const interval = setInterval(async () => {
+  currentInterval = setInterval(async () => {
     const killerTeam = Math.random() > 0.5 ? "FURIA" : opponent;
     const victimTeam = killerTeam === "FURIA" ? opponent : "FURIA";
 
@@ -99,6 +103,8 @@ export async function startGameSimulation() {
 
     if (score.FURIA >= 16 || score[opponent] >= 16) {
       clearInterval(interval);
+      currentInterval = null;
+      currentGameId = null;
       game.status = "finalizado";
       game.endedAt = new Date();
       await game.save();
@@ -120,4 +126,67 @@ export async function startGameSimulation() {
       await game.save();
     }
   }, 6000);
+}
+
+export async function pauseGame() {
+  if (currentInterval) {
+    clearInterval(currentInterval);
+    currentInterval = null;
+
+    const game = await Game.findById(currentGameId);
+    if (game) {
+      game.status = "pausado";
+      await game.save();
+    }
+
+    await emitAndSaveMessage({
+      sender: "BOT FURIA",
+      message: "⏸️ Partida pausada.",
+      type: "bot",
+      timestamp: new Date().toISOString(),
+    });
+    io.emit("game-update", {
+      teams: game.teams,
+      score: game.score,
+      status: "pausado",
+      events: game.events,
+    });
+  }
+}
+
+export async function endGame() {
+  if (currentInterval) {
+    clearInterval(currentInterval);
+    currentInterval = null;
+  }
+
+  const game = await Game.findById(currentGameId);
+  console.log(game);
+
+  if (game && game.status !== "finalizado") {
+    game.status = "finalizado";
+    game.endedAt = new Date();
+    await game.save();
+
+    
+    const scoreObject =
+      game.score instanceof Map ? Object.fromEntries(game.score) : game.score;
+
+    const opponent = game.teams[1];
+    await emitAndSaveMessage({
+      sender: "BOT FURIA",
+      message: `🚨 Partida finalizada manualmente. Placar final: FURIA ${scoreObject.FURIA} x ${scoreObject[opponent]} ${opponent}`,
+      type: "end",
+      timestamp: new Date().toISOString(),
+    });
+
+    io.emit("game-update", {
+      teams: game.teams,
+      score: game.score,
+      status: "finalizado",
+      events: game.events,
+    });
+  }
+
+  currentGameId = null;
 }

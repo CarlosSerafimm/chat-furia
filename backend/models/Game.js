@@ -27,7 +27,7 @@ const gameSchema = new mongoose.Schema({
   endedAt: Date,
   status: {
     type: String,
-    enum: ["aguardando", "em_andamento", "finalizado"],
+    enum: ["aguardando", "em_andamento", "finalizado", "pausado"],
     default: "waiting",
   },
 });

@@ -63,7 +63,7 @@ export const socketHandler = (io) => {
         if (isCommand && chatCommands[msg]) {
           const response =
             typeof chatCommands[msg].response === "function"
-              ? chatCommands[msg].response()
+              ? await chatCommands[msg].response()
               : chatCommands[msg].response;
           const botResponse = {
             sender: "BOT FURIA",

@@ -1,3 +1,5 @@
+import Game from "../models/Game.js";
+import { endGame, pauseGame } from "../service/GameService.js";
 import { coachMessages } from "./coachMessages.js";
 import { dicasFuria } from "./dicas.js";
 import { hinosFuria } from "./hinosFuria.js";
@@ -88,6 +90,85 @@ export const chatCommands = {
         message: "/assets/furia-logo.png",
         type: "sticker",
       };
+    },
+  },
+
+  "/jogo-anterior": {
+    response: async () => {
+      const jogo = await Game.findOne({ status: "finalizado" }).sort({
+        endedAt: -1,
+      });
+
+      if (!jogo) {
+        return "❌ Nenhuma partida finalizada encontrada. Simule uma partida para ver as estatísticas!";
+      }
+
+      const { teams, score, startedAt, endedAt } = jogo;
+
+      const duracaoMs = new Date(endedAt) - new Date(startedAt);
+      const minutos = Math.floor(duracaoMs / 60000);
+      const segundos = Math.floor((duracaoMs % 60000) / 1000);
+
+      const scoreTime1 = score.get(teams[0]);
+      const scoreTime2 = score.get(teams[1]);
+      const vencedor = scoreTime1 === 16 ? teams[0] : teams[1];
+
+      return `📊 Estatísticas da última partida:\n\n🏆 Vencedor: ${vencedor}\n🆚 ${teams[0]} ${scoreTime1} x ${scoreTime2} ${teams[1]}\n⏱️ Duração: ${minutos}m ${segundos}s`;
+    },
+  },
+  "/placar": {
+    response: async () => {
+      const jogo = await Game.findOne({ status: "em_andamento" });
+
+      if (!jogo) {
+        return "❌ Nenhuma partida em andamento no momento. Tente novamente mais tarde!";
+      }
+
+      const { teams, score } = jogo;
+      const scoreTime1 = score.get(teams[0]);
+      const scoreTime2 = score.get(teams[1]);
+
+      return `📊 Placar Atual:\n\n🆚 ${teams[0]} ${scoreTime1} x ${scoreTime2} ${teams[1]}`;
+    },
+  },
+
+  "/rounds": {
+    response: async () => {
+      const jogo = await Game.findOne({ status: "em_andamento" });
+
+      if (!jogo) {
+        return "❌ Nenhuma partida em andamento no momento. Inicie uma simulação para acompanhar os rounds!";
+      }
+
+      const { teams, score } = jogo;
+      const scoreTime1 = score.get(teams[0]) || 0;
+      const scoreTime2 = score.get(teams[1]) || 0;
+      const roundsTotal = scoreTime1 + scoreTime2;
+      const roundsRestantes = 30 - roundsTotal;
+
+      return `🎯 Rounds Restantes: ${roundsRestantes}\n🔢 Rodadas disputadas: ${roundsTotal}/30\n\n📊 Placar Atual:\n🆚 ${teams[0]} ${scoreTime1} x ${scoreTime2} ${teams[1]}`;
+    },
+  },
+  "/pause": {
+    response: async () => {
+      const jogo = await Game.findOne({ status: "em_andamento" });
+
+      if (!jogo) {
+        return "❌ Nenhuma partida em andamento no momento.";
+      }
+      await pauseGame();
+      return "⏸️ Pausando a simulação...";
+    },
+  },
+  "/finalizar": {
+    response: async () => {
+      const jogo = await Game.findOne({ status: "em_andamento" });
+
+      if (!jogo) {
+        return "❌ Nenhuma partida em andamento no momento.";
+      }
+      await endGame();
+      return "🏁 Finalizando a partida atual.";
     },
   },
 

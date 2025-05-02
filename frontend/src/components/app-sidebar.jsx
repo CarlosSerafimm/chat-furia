@@ -94,15 +94,22 @@ export function AppSidebar() {
           className={
             status === "finalizado"
               ? "text-red-400"
+              : status === "pausado"
+              ? "text-yellow-300"
               : status
               ? "text-green-400"
-              : "text-yellow-400"
+              : "text-zinc-400"
           }
         >
           {status === "finalizado" ? (
             <>
               <CheckCircle size={16} className="inline-block mr-1" />
               Partida finalizada
+            </>
+          ) : status === "pausado" ? (
+            <>
+              <span className="inline-block mr-1">⏸️</span>
+              Jogo pausado
             </>
           ) : status ? (
             <>
