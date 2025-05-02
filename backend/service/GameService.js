@@ -46,6 +46,7 @@ export async function startGameSimulation() {
     sender: "BOT FURIA",
     message: `Iniciando partida: FURIA vs ${opponent}`,
     type: "bot",
+    timestamp: new Date().toISOString(),
   });
 
   io.emit("game-update", {
@@ -78,11 +79,13 @@ export async function startGameSimulation() {
       sender: "BOT FURIA",
       message: eventDescription,
       type: "event",
+      timestamp: new Date().toISOString(),
     });
     await emitAndSaveMessage({
       sender: "BOT FURIA",
       message: `${killerTeam} ganhou 1 ponto! Placar: FURIA ${score.FURIA} x ${score[opponent]} ${opponent}`,
       type: "score",
+      timestamp: new Date().toISOString(),
     });
 
     io.emit("score-update", score);

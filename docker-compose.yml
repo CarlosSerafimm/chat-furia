@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-  # MongoDB Service
   mongo:
     image: mongo
     container_name: mongo-furia
@@ -12,36 +11,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: furia
       MONGO_INITDB_ROOT_PASSWORD: furia
-
-  # # Backend Service (Node.js)
-  # backend:
-  #   build:
-  #     context: ./backend
-  #   container_name: backend-furia
-  #   ports:
-  #     - "5000:5000"  # Porta que o backend estará expondo
-  #   environment:
-  #     - MONGO_URI=mongodb://furiauser:furiapass@mongo:27017/furiaDB?authSource=admin
-  #   depends_on:
-  #     - mongo  # Espera o MongoDB iniciar antes do backend
-  #   networks:
-  #     - furia-network
-  #   volumes:
-  #     - ./backend:/app
-
-  # # Frontend Service (React)
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #   container_name: frontend-furia
-  #   ports:
-  #     - "3000:3000"  # Porta que o React usará
-  #   depends_on:
-  #     - backend  # Espera o backend iniciar antes do frontend
-  #   networks:
-  #     - furia-network
-  #   volumes:
-  #     - ./frontend:/app
+    networks:
+      - furia-network
 
 volumes:
   mongo_data:

@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
 const mongoUrl = "mongodb://furia:furia@localhost:27017/furiaDB?authSource=admin";
+// const mongoUrl = "mongodb://furia:furia@mongo:27017/furiaDB?authSource=admin";
+
 
 export const connectDB = async () => {
   try {

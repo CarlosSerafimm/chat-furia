@@ -9,10 +9,40 @@ const urlLogo = "../assets/furia-logo.png";
 
 export const chatCommands = {
   "/ajuda": {
-    response: "Comandos disponíveis: /hino, /jogadores, /sobre, /ajuda",
+    response:
+      "Comandos disponíveis:\n" +
+      "/hino - Toca um hino aleatório da FURIA.\n" +
+      "/jogadores - Exibe a lista de jogadores da FURIA.\n" +
+      "/sobre - Mostra informações sobre a organização FURIA.\n" +
+      "/ajuda - Exibe todos os comandos disponíveis.\n" +
+      "/help - Exibe todos os comandos disponíveis.\n" +
+      "/dica - Dá uma dica aleatória sobre CS.\n" +
+      "/roleta - Dá um palpite de qual jogador vai decidir o round.\n" +
+      "/coach - Mensagem do coach SIDDE.\n" +
+      "/torcida - Grito da torcida da FURIA.\n" +
+      "/sticker - Envia um sticker com o logo da FURIA.\n" +
+      "/historia - Exibe a história da FURIA.\n" +
+      "/titulos - Lista os principais títulos da FURIA.\n" +
+      "/ranking - Exibe a colocação atual da FURIA no ranking mundial.\n" +
+      "/proximo-jogo - Exibe informações sobre o próximo jogo da FURIA.",
   },
   "/help": {
-    response: "Comandos disponíveis: /hino, /jogadores, /sobre, /ajuda",
+    response:
+      "Comandos disponíveis:\n" +
+      "/hino - Toca um hino aleatório da FURIA.\n" +
+      "/jogadores - Exibe a lista de jogadores da FURIA.\n" +
+      "/sobre - Mostra informações sobre a organização FURIA.\n" +
+      "/ajuda - Exibe todos os comandos disponíveis.\n" +
+      "/help - Exibe todos os comandos disponíveis.\n" +
+      "/dica - Dá uma dica aleatória sobre CS.\n" +
+      "/roleta - Dá um palpite de qual jogador vai decidir o round.\n" +
+      "/coach - Mensagem do coach SIDDE.\n" +
+      "/torcida - Grito da torcida da FURIA.\n" +
+      "/sticker - Envia um sticker com o logo da FURIA.\n" +
+      "/historia - Exibe a história da FURIA.\n" +
+      "/titulos - Lista os principais títulos da FURIA.\n" +
+      "/ranking - Exibe a colocação atual da FURIA no ranking mundial.\n" +
+      "/proximo-jogo - Exibe informações sobre o próximo jogo da FURIA.",
   },
   "/hino": {
     response: () => {

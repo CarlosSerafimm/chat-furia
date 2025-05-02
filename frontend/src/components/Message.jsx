@@ -2,6 +2,9 @@ import { User } from "lucide-react";
 import furiaLogo from "@/assets/furia-logo.png";
 
 export default function Message({ msg, own }) {
+
+  console.log(msg);
+  
   const timestamp = new Date(msg.timestamp).toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
