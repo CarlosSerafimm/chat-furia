@@ -12,6 +12,10 @@ export default function Login({ toggle }) {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  if (!socket.connected) {
+    socket.connect();
+  }
+
   const handleLogin = () => {
     if (!username.trim() || !password.trim()) return;
 

@@ -7,6 +7,17 @@ import { Button } from "@/components/ui/button";
 import ConfirmarDialog from "@/components/ConfirmarDialog";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function Chat() {
   const [messages, setMessages] = useState([]);
@@ -46,10 +57,13 @@ export default function Chat() {
     const handleMessage = (msg) => {
       setMessages((prev) => [...prev, msg]);
     };
-
     const handleDisconnect = () => {
       socket.hasLoggedIn = false;
+      // socket.disconnect();
+
       sessionStorage.removeItem("loggedInManually");
+      // sessionStorage.removeItem("password");
+      // sessionStorage.removeItem("username");
       navigate("/", { replace: true });
     };
 
@@ -69,6 +83,15 @@ export default function Chat() {
       socket.off("disconnect", handleDisconnect);
     };
   }, [navigate, storedUsername, storedPassword]);
+
+  const deslogar = () => {
+    socket.disconnect();
+
+    sessionStorage.removeItem("loggedInManually");
+    sessionStorage.removeItem("password");
+    sessionStorage.removeItem("username");
+    navigate("/", { replace: true });
+  };
 
   useEffect(() => {
     const calculateChatBoxHeight = () => {
@@ -121,9 +144,43 @@ export default function Chat() {
     <div className="min-h-screen w-full bg-zinc-900 text-white flex flex-col">
       <header
         ref={headerRef}
-        className="text-center py-4 text-2xl font-bold border-b border-zinc-800"
+        className="relative py-4 text-2xl font-bold border-b border-zinc-800 text-center"
       >
         Chat da FURIA
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors duration-300 hover:bg-red-600"
+            >
+              Deslogar
+            </Button>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent className="bg-zinc-800 text-white border border-zinc-700 shadow-2xl rounded-2xl max-w-md mx-auto px-6 py-5 animate-in fade-in slide-in-from-top duration-300">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-xl font-semibold text-white">
+                Deseja realmente sair?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-sm text-zinc-400 mt-1">
+                Isso encerrará sua sessão no chat e você será redirecionado para
+                a tela de login.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter className="mt-6">
+              <AlertDialogCancel className="bg-zinc-700 text-white hover:bg-zinc-600 transition-colors">
+                Cancelar
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={deslogar}
+                className="bg-red-600 text-white hover:bg-red-500 transition-colors"
+              >
+                Sair do chat
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </header>
 
       <div className="overflow-hidden flex flex-col px-4 pt-4">
