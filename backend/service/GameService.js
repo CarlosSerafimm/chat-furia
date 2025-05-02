@@ -1,10 +1,17 @@
 import Game from "../models/Game.js";
+
 import {
   OPPONENT_TEAMS,
   FURIA_PLAYERS,
   OPPONENT_PLAYERS,
 } from "../enums/teams.js";
 import { io } from "../socket/socketInstance.js";
+import Message from "../models/Message.js";
+
+async function emitAndSaveMessage(data) {
+  io.emit("message", data);
+  await Message.create(data);
+}
 
 function getRandomOpponent() {
   const index = Math.floor(Math.random() * OPPONENT_TEAMS.length);
@@ -35,11 +42,12 @@ export async function startGameSimulation() {
   const game = new Game({ teams, score, status: "in_progress" });
   await game.save();
 
-  io.emit("message", {
+  await emitAndSaveMessage({
     sender: "BOT FURIA",
     message: `Iniciando partida: FURIA vs ${opponent}`,
     type: "bot",
   });
+
   io.emit("game-update", {
     teams,
     score,
@@ -66,13 +74,12 @@ export async function startGameSimulation() {
     score[killerTeam]++;
     game.score = score;
 
-    io.emit("message", {
+    await emitAndSaveMessage({
       sender: "BOT FURIA",
       message: eventDescription,
       type: "event",
     });
-
-    io.emit("message", {
+    await emitAndSaveMessage({
       sender: "BOT FURIA",
       message: `${killerTeam} ganhou 1 ponto! Placar: FURIA ${score.FURIA} x ${score[opponent]} ${opponent}`,
       type: "score",
@@ -93,11 +100,12 @@ export async function startGameSimulation() {
       game.endedAt = new Date();
       await game.save();
 
-      io.emit("message", {
+      await emitAndSaveMessage({
         sender: "BOT FURIA",
         message: `Fim de jogo! FURIA ${score.FURIA} x ${score[opponent]} ${opponent}`,
         type: "end",
       });
+
       io.emit("game-update", {
         teams,
         score,

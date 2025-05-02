@@ -2,6 +2,11 @@ import { User } from "lucide-react";
 import furiaLogo from "@/assets/furia-logo.png";
 
 export default function Message({ msg, own }) {
+  const timestamp = new Date(msg.timestamp).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
   let textColor = "";
   let bgColor = "";
 
@@ -47,10 +52,11 @@ export default function Message({ msg, own }) {
         ))}
 
       <div
-        className={`flex flex-col ${textColor} ${bgColor} max-w-[80%] break-words p-2 rounded-lg`}
+        className={`flex flex-col ${textColor} ${bgColor} max-w-[80%] break-words py-1 px-4 rounded-lg`}
       >
         <span className="font-semibold">{msg.sender}</span>
         <span className="text-sm">{msg.message}</span>
+        <span className="text-zinc-400 text-xs mt-1 self-end">{timestamp}</span>
       </div>
 
       {own && (

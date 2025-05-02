@@ -5,7 +5,7 @@ const messageSchema = new mongoose.Schema({
   message: { type: String, required: true },
   type: {
     type: String,
-    enum: ["text", "bot", "command", "event"],
+    enum: ["text", "bot", "command", "event", "score", "end"],
     default: "text"
   },
   timestamp: {

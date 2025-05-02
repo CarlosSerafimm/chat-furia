@@ -32,12 +32,15 @@ export const socketHandler = (io) => {
 
         if (!socket.hasLoggedIn) {
           socket.hasLoggedIn = true;
-          io.emit("message", {
+          const botMessage = {
             sender: "BOT FURIA",
             message: `${username} entrou no chat`,
             type: "bot",
             timestamp: new Date(),
-          });
+          };
+
+          io.emit("message", botMessage);
+          await Message.create(botMessage);
         }
       } catch (err) {
         console.error("Erro no login:", err);
@@ -59,17 +62,21 @@ export const socketHandler = (io) => {
       }
     });
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
       console.log("Algum usuário desconectou");
       if (socket.username) {
         console.log("Usuário " + socket.username + " desconectado");
         activeUsers.delete(socket.username);
-        io.emit("message", {
+
+        const botMessage = {
           sender: "BOT FURIA",
           message: `${socket.username} saiu do chat`,
           type: "bot",
           timestamp: new Date(),
-        });
+        };
+
+        io.emit("message", botMessage);
+        await Message.create(botMessage); 
       }
     });
   });
