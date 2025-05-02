@@ -4,7 +4,7 @@ import {
   OPPONENT_TEAMS,
   FURIA_PLAYERS,
   OPPONENT_PLAYERS,
-} from "../enums/teams.js";
+} from "../utils/teams.js";
 import { io } from "../socket/socketInstance.js";
 import Message from "../models/Message.js";
 

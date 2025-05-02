@@ -1,6 +1,7 @@
 import Message from "../models/Message.js";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
+import { chatCommands } from "../utils/chatCommands.js";
 
 const usuarios = new Map();
 const activeUsers = new Set();
@@ -50,13 +51,26 @@ export const socketHandler = (io) => {
 
     socket.on("chatMessage", async (msg) => {
       try {
+        const isCommand = msg.startsWith("/");
         const message = new Message({
           sender: socket.username,
           message: msg,
-          type: msg.startsWith("/") ? "command" : "text",
+          type: isCommand ? "command" : "text",
         });
         await message.save();
         io.emit("message", message);
+
+        if (isCommand && chatCommands[msg]) {
+          const botResponse = {
+            sender: "BOT FURIA",
+            message: chatCommands[msg].response,
+            type: "bot",
+            timestamp: new Date(),
+          };
+
+          io.emit("message", botResponse);
+          await Message.create(botResponse);
+        }
       } catch (err) {
         console.error("Erro ao salvar mensagem:", err);
       }
@@ -76,7 +90,7 @@ export const socketHandler = (io) => {
         };
 
         io.emit("message", botMessage);
-        await Message.create(botMessage); 
+        await Message.create(botMessage);
       }
     });
   });
