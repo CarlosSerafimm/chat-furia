@@ -4,32 +4,32 @@ const gameSchema = new mongoose.Schema({
   teams: {
     type: [String],
     required: true,
-    validate: (arr) => arr.length === 2
+    validate: (arr) => arr.length === 2,
   },
   score: {
     type: Map,
     of: Number,
-    required: true
+    required: true,
   },
   events: [
     {
       timestamp: {
         type: Date,
-        default: Date.now
+        default: Date.now,
       },
-      description: String
-    }
+      description: String,
+    },
   ],
   startedAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   endedAt: Date,
   status: {
     type: String,
-    enum: ["waiting", "in_progress", "ended"],
-    default: "waiting"
-  }
+    enum: ["aguardando", "em_andamento", "finalizado"],
+    default: "waiting",
+  },
 });
 
 const Game = mongoose.model("Game", gameSchema);

@@ -89,16 +89,32 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="px-4 py-3 border-t border-zinc-700 text-sm text-zinc-400 bg-zinc-900">
-        Status:
+        Status:{" "}
         <span
-          className={status === "ended" ? "text-red-400" : "text-green-400"}
+          className={
+            status === "finalizado"
+              ? "text-red-400"
+              : status
+              ? "text-green-400"
+              : "text-yellow-400"
+          }
         >
-          {status === "ended" ? (
-            <CheckCircle size={16} className="inline-block mr-1" />
+          {status === "finalizado" ? (
+            <>
+              <CheckCircle size={16} className="inline-block mr-1" />
+              Partida finalizada
+            </>
+          ) : status ? (
+            <>
+              <span className="inline-block mr-1">🎮</span>
+              {status}
+            </>
           ) : (
-            <span className="inline-block mr-1">🎮</span>
+            <>
+              <span className="inline-block mr-1">🕹️</span>
+              Sem partida ativa
+            </>
           )}
-          {status || "Carregando..."}
         </span>
       </SidebarFooter>
     </Sidebar>

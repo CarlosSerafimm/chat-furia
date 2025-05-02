@@ -3,7 +3,7 @@ import { startGameSimulation } from "../service/GameService.js";
 
 export async function iniciarSimulacao(req, res) {
   try {
-    const existingGame = await Game.findOne({ status: "in_progress" });
+    const existingGame = await Game.findOne({ status: "em_andamento" });
 
     if (existingGame) {
       return res

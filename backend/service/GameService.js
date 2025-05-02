@@ -39,7 +39,7 @@ export async function startGameSimulation() {
   const playersOpponent = [...OPPONENT_PLAYERS[opponent]];
   const score = { FURIA: 0, [opponent]: 0 };
 
-  const game = new Game({ teams, score, status: "in_progress" });
+  const game = new Game({ teams, score, status: "em_andamento" });
   await game.save();
 
   await emitAndSaveMessage({
@@ -52,7 +52,7 @@ export async function startGameSimulation() {
   io.emit("game-update", {
     teams,
     score,
-    status: "in_progress",
+    status: "em_andamento",
   });
 
   const interval = setInterval(async () => {
@@ -99,7 +99,7 @@ export async function startGameSimulation() {
 
     if (score.FURIA >= 16 || score[opponent] >= 16) {
       clearInterval(interval);
-      game.status = "ended";
+      game.status = "finalizado";
       game.endedAt = new Date();
       await game.save();
 
@@ -107,12 +107,13 @@ export async function startGameSimulation() {
         sender: "BOT FURIA",
         message: `Fim de jogo! FURIA ${score.FURIA} x ${score[opponent]} ${opponent}`,
         type: "end",
+        timestamp: new Date().toISOString(),
       });
 
       io.emit("game-update", {
         teams,
         score,
-        status: "ended",
+        status: "finalizado",
         events: game.events,
       });
     } else {
