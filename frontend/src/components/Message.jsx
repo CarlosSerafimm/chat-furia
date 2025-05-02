@@ -39,7 +39,7 @@ export default function Message({ msg, own }) {
       }`}
     >
       {!own &&
-        (["bot", "event", "score", "end"].includes(msg.type) ? (
+        (["bot", "event", "score", "end", "sticker"].includes(msg.type) ? (
           <img
             src={furiaLogo}
             alt="Logo FURIA"
@@ -55,7 +55,19 @@ export default function Message({ msg, own }) {
         className={`flex flex-col ${textColor} ${bgColor} max-w-[80%] break-words py-1 px-4 rounded-lg`}
       >
         <span className="font-semibold">{msg.sender}</span>
-        <span className="text-sm">{msg.message}</span>
+
+        {msg.type === "sticker" ? (
+          <div className="">
+            <img
+              src={furiaLogo}
+              alt="Sticker"
+              className="w-32 h-32 mt-2 rounded-lg"
+            />
+          </div>
+        ) : (
+          <span className="text-sm whitespace-pre-line">{msg.message}</span>
+        )}
+
         <span className="text-zinc-400 text-xs mt-1 self-end">{timestamp}</span>
       </div>
 

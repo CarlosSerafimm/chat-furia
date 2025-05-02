@@ -61,10 +61,14 @@ export const socketHandler = (io) => {
         io.emit("message", message);
 
         if (isCommand && chatCommands[msg]) {
+          const response =
+            typeof chatCommands[msg].response === "function"
+              ? chatCommands[msg].response()
+              : chatCommands[msg].response;
           const botResponse = {
             sender: "BOT FURIA",
-            message: chatCommands[msg].response,
-            type: "bot",
+            message: typeof response === "object" ? response.message : response,
+            type: typeof response === "object" ? response.type : "bot",
             timestamp: new Date(),
           };
 

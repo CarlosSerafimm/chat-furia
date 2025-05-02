@@ -1,0 +1,13 @@
+export const torcidaMessages = [
+    "🎉 VAMOOO FURIAAAA!!! É O BRASIL NO TOPOOO 🇧🇷🔥",
+    "🐍 FUUUUUUURIA! FUUUUUUURIA! FUUUUUUURIA!",
+    "💥 É KILL ATRÁS DE KILL! NÃO PARA, FURIA!",
+    "🚨 O ESTÚDIO VEM ABAIXO COM ESSA JOGADA!",
+    "🎺 PAPAPA-PÁÁÁÁÁÁ, PAPAPA-PÁÁÁÁÁÁ, VAI FURIAAA!",
+    "👏👏👏 QUE TIME, SENHORAS E SENHORES! FURIA É SHOW!",
+    "🔥 ESSA É PRA LEVANTAR A GALERA! FURIA NO CLUTCH!",
+    "🎊 OLÉÉÉÉ, OLÉÉÉÉÉ, OLÉÉÉ FURIAAAAA!",
+    "🙌 TÁ LINDA A FESTA, É O TIME DO POVO!",
+    "🔊 ALGUÉM SEGURA ESSE TIME! FURIA DESLANCHOU!"
+  ];
+  
