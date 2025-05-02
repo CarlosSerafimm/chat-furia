@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   mongo:
     image: mongo
@@ -11,6 +9,28 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: furia
       MONGO_INITDB_ROOT_PASSWORD: furia
+    networks:
+      - furia-network
+
+  backend:
+    build: ./backend
+    container_name: backend-furia
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://furia:furia@mongo:27017
+    depends_on:
+      - mongo
+    networks:
+      - furia-network
+
+  frontend:
+    build: ./frontend
+    container_name: frontend-furia
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
     networks:
       - furia-network
 
