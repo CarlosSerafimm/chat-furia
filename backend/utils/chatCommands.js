@@ -26,7 +26,12 @@ export const chatCommands = {
       "/historia - Exibe a história da FURIA.\n" +
       "/titulos - Lista os principais títulos da FURIA.\n" +
       "/ranking - Exibe a colocação atual da FURIA no ranking mundial.\n" +
-      "/proximo-jogo - Exibe informações sobre o próximo jogo da FURIA.",
+      "/proximo-jogo - Exibe informações sobre o próximo jogo da FURIA.\n" +
+      "/jogo-anterior - Exibe informações sobre o jogo anterior da FURIA.\n" +
+      "/placar - Exibe o placar do jogo que está em andamento.\n" +
+      "/rounds - Exibe quantos rounds faltam no máximo para acabar a partida.\n" +
+      "/pause - Pausa o jogo que está em andamento.\n" +
+      "/finalizar - Finaliza o jogo que está em andamento.",
   },
   "/help": {
     response:
@@ -44,7 +49,12 @@ export const chatCommands = {
       "/historia - Exibe a história da FURIA.\n" +
       "/titulos - Lista os principais títulos da FURIA.\n" +
       "/ranking - Exibe a colocação atual da FURIA no ranking mundial.\n" +
-      "/proximo-jogo - Exibe informações sobre o próximo jogo da FURIA.",
+      "/proximo-jogo - Exibe informações sobre o próximo jogo da FURIA.\n" +
+      "/jogo-anterior - Exibe informações sobre o jogo anterior da FURIA.\n" +
+      "/placar - Exibe o placar do jogo que está em andamento.\n" +
+      "/rounds - Exibe quantos rounds faltam no máximo para acabar a partida.\n" +
+      "/pause - Pausa o jogo que está em andamento.\n" +
+      "/finalizar - Finaliza o jogo que está em andamento.",
   },
   "/hino": {
     response: () => {
