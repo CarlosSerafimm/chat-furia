@@ -139,6 +139,35 @@ export default function Chat() {
       setErroSimulacao(msg);
     }
   };
+  const pausarSimulacao = async () => {
+    try {
+      await axios.post("http://localhost:3000/pausar-simulacao");
+      setErroSimulacao(null);
+    } catch (error) {
+      const msg = error.response?.data?.error || "Erro ao pausar simulação.";
+      setErroSimulacao(msg);
+    }
+  };
+
+  const finalizarSimulacao = async () => {
+    try {
+      await axios.post("http://localhost:3000/finalizar-simulacao");
+      setErroSimulacao(null);
+    } catch (error) {
+      const msg = error.response?.data?.error || "Erro ao finalizar simulação.";
+      setErroSimulacao(msg);
+    }
+  };
+
+  const retomarSimulacao = async () => {
+    try {
+      await axios.post("http://localhost:3000/retomar-simulacao");
+      setErroSimulacao(null);
+    } catch (error) {
+      const msg = error.response?.data?.error || "Erro ao retomar simulação.";
+      setErroSimulacao(msg);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full bg-zinc-900 text-white flex flex-col">
@@ -151,7 +180,7 @@ export default function Chat() {
           <AlertDialogTrigger asChild>
             <Button
               variant="destructive"
-              className="absolute right-4 top-1/2 -translate-y-1/2 transition-colors duration-300 hover:bg-red-600"
+              className="cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 transition-colors duration-300 border border-red-400 bg-red-600 hover:bg-red-800"
             >
               Deslogar
             </Button>
@@ -210,7 +239,12 @@ export default function Chat() {
               </motion.p>
             )}
           </AnimatePresence>
-          <ConfirmarDialog onConfirm={iniciarSimulacao} />
+          <ConfirmarDialog
+            iniciarSimulacao={iniciarSimulacao}
+            pausarSimulacao={pausarSimulacao}
+            retomarSimulacao={retomarSimulacao}
+            finalizarSimulacao={finalizarSimulacao}
+          />
           <Input
             className="bg-zinc-800 text-white flex-1"
             placeholder="Digite uma mensagem ou comando"
@@ -218,7 +252,7 @@ export default function Chat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
-          <Button className="bg-emerald-800" onClick={sendMessage}>
+          <Button className="cursor-pointer border border-emerald-400 bg-emerald-800 hover:bg-emerald-950" onClick={sendMessage}>
             Enviar
           </Button>
         </div>

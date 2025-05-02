@@ -12,7 +12,7 @@ export default function App() {
         {!isAuthPage && <AppSidebar  />}
         <main className={`flex-1 relative`}>
           {!isAuthPage && (
-            <SidebarTrigger className="absolute top-4 left-4 z-10 bg-slate-400" />
+            <SidebarTrigger className="cursor-pointer absolute top-4 left-4 z-10 bg-slate-400" />
           )}
           <Outlet />
         </main>

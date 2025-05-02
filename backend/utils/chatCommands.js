@@ -1,5 +1,5 @@
 import Game from "../models/Game.js";
-import { endGame, pauseGame } from "../service/GameService.js";
+import { endGame, pauseGame, resumeGame } from "../service/GameService.js";
 import { coachMessages } from "./coachMessages.js";
 import { dicasFuria } from "./dicas.js";
 import { hinosFuria } from "./hinosFuria.js";
@@ -29,9 +29,7 @@ export const chatCommands = {
       "/proximo-jogo - Exibe informações sobre o próximo jogo da FURIA.\n" +
       "/jogo-anterior - Exibe informações sobre o jogo anterior da FURIA.\n" +
       "/placar - Exibe o placar do jogo que está em andamento.\n" +
-      "/rounds - Exibe quantos rounds faltam no máximo para acabar a partida.\n" +
-      "/pause - Pausa o jogo que está em andamento.\n" +
-      "/finalizar - Finaliza o jogo que está em andamento.",
+      "/rounds - Exibe quantos rounds faltam no máximo para acabar a partida.\n",
   },
   "/help": {
     response:
@@ -52,9 +50,7 @@ export const chatCommands = {
       "/proximo-jogo - Exibe informações sobre o próximo jogo da FURIA.\n" +
       "/jogo-anterior - Exibe informações sobre o jogo anterior da FURIA.\n" +
       "/placar - Exibe o placar do jogo que está em andamento.\n" +
-      "/rounds - Exibe quantos rounds faltam no máximo para acabar a partida.\n" +
-      "/pause - Pausa o jogo que está em andamento.\n" +
-      "/finalizar - Finaliza o jogo que está em andamento.",
+      "/rounds - Exibe quantos rounds faltam no máximo para acabar a partida.\n",
   },
   "/hino": {
     response: () => {
@@ -157,28 +153,6 @@ export const chatCommands = {
       const roundsRestantes = 30 - roundsTotal;
 
       return `🎯 Rounds Restantes: ${roundsRestantes}\n🔢 Rodadas disputadas: ${roundsTotal}/30\n\n📊 Placar Atual:\n🆚 ${teams[0]} ${scoreTime1} x ${scoreTime2} ${teams[1]}`;
-    },
-  },
-  "/pause": {
-    response: async () => {
-      const jogo = await Game.findOne({ status: "em_andamento" });
-
-      if (!jogo) {
-        return "❌ Nenhuma partida em andamento no momento.";
-      }
-      await pauseGame();
-      return "⏸️ Pausando a simulação...";
-    },
-  },
-  "/finalizar": {
-    response: async () => {
-      const jogo = await Game.findOne({ status: "em_andamento" });
-
-      if (!jogo) {
-        return "❌ Nenhuma partida em andamento no momento.";
-      }
-      await endGame();
-      return "🏁 Finalizando a partida atual.";
     },
   },
 

@@ -7,8 +7,8 @@ import {
   SidebarGroup,
 } from "@/components/ui/sidebar";
 import { socket } from "@/socket.js";
-import { CheckCircle, Clock, XCircle } from "lucide-react"; // Importando ícones do lucide-react
-import { motion } from "framer-motion"; // Importando o framer-motion
+import { CheckCircle, Clock, XCircle } from "lucide-react"; 
+import { motion } from "framer-motion"; 
 
 const EventMessage = ({ description, timestamp }) => (
   <motion.div
